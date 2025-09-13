@@ -2,6 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict # <-- Import ConfigDict
 from typing import List, Optional
+from datetime import datetime
 
 # --- Challenge Schemas ---
 class ChallengeBase(BaseModel):
@@ -14,13 +15,23 @@ class ChallengeCreate(ChallengeBase):
 
 class Challenge(ChallengeBase):
     id: int
+    day: Optional[int] = None
 
     # This is the new Pydantic V2 syntax
     model_config = ConfigDict(from_attributes=True)
 
-# --- Submission Schema ---
-class Submission(BaseModel):
+# --- Submission Schemas ---
+# Payload accepted when submitting an answer
+class SubmissionCreate(BaseModel):
     answer: str
+
+# Full Submission representation stored in DB (for responses or history)
+class Submission(BaseModel):
+    user_id: int
+    challenge_id: int
+    answer: str
+    is_correct: bool
+    timestamp: Optional[str] = None
 
 # --- User Schemas ---
 class UserBase(BaseModel):
@@ -34,6 +45,7 @@ class User(UserBase):
     id: int
     xp: int
     streak: int
+    signup_date: Optional[datetime] = None
 
     # This is the new Pydantic V2 syntax
     model_config = ConfigDict(from_attributes=True)

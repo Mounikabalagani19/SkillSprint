@@ -41,7 +41,20 @@ const Home = () => {
 
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-slate-700 dark:text-slate-200 mb-8 text-left">
-          Today's Challenges
+          {(() => {
+            // Try to extract a day number from challenges (either a 'day' field or from title "Day N")
+            let dayLabel = null;
+            if (challenges && challenges.length > 0) {
+              const first = challenges[0];
+              if (first.day) {
+                dayLabel = ` (Day ${first.day})`;
+              } else if (first.title) {
+                const m = first.title.match(/Day\s*(\d+)/i);
+                if (m) dayLabel = ` (Day ${m[1]})`;
+              }
+            }
+            return `Today's Challenges${dayLabel || ''}`;
+          })()}
         </h2>
         
         {loading && (
@@ -61,7 +74,7 @@ const Home = () => {
         
         {!loading && !error && (
           challenges.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-fr">
               {challenges.map((challenge) => (
                 <ChallengeCard key={challenge.id} challenge={challenge} />
               ))}

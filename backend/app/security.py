@@ -39,6 +39,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 # This defines the security scheme (getting the token from the "Authorization" header)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/users/token")
 
+# Optional oauth2 scheme that doesn't raise automatically when missing
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="api/v1/users/token", auto_error=False)
+
 def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     """
     Decodes the JWT token to get the current user.
@@ -59,6 +62,25 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
     user = crud.get_user_by_username(db, username=token_data.username)
     if user is None:
         raise credentials_exception
+    return user
+
+
+def get_current_user_optional(db: Session = Depends(get_db), token: Optional[str] = Depends(oauth2_scheme_optional)):
+    """
+    Optional variant of get_current_user: returns a user when a valid token is provided,
+    otherwise returns None (no HTTPException on missing token).
+    """
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            return None
+        token_data = schemas.TokenData(username=username)
+    except JWTError:
+        return None
+    user = crud.get_user_by_username(db, username=token_data.username)
     return user
 
 def get_current_active_user(current_user: models.User = Depends(get_current_user)):

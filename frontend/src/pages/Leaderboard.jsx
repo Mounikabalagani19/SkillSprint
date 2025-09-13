@@ -40,38 +40,38 @@ const Leaderboard = () => {
       {error && <p className="text-center text-red-500 bg-red-100 p-4 rounded-lg">{error}</p>}
       
       {!loading && !error && (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden">
           <table className="min-w-full leading-normal">
             <thead>
               <tr>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 text-left text-xs font-semibold text-gray-600 dark:text-slate-300 uppercase tracking-wider">
                   Rank
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 text-left text-xs font-semibold text-gray-600 dark:text-slate-300 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 text-left text-xs font-semibold text-gray-600 dark:text-slate-300 uppercase tracking-wider">
                   XP
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 text-left text-xs font-semibold text-gray-600 dark:text-slate-300 uppercase tracking-wider">
                   Streak
                 </th>
               </tr>
             </thead>
             <tbody>
               {users.map((user, index) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap font-bold">{index + 1}</p>
+                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-slate-700">
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                    <p className="text-gray-900 dark:text-white whitespace-no-wrap font-bold">{index + 1}</p>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{user.username}</p>
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                    <p className="text-gray-900 dark:text-white whitespace-no-wrap">{user.username}</p>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{user.xp}</p>
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                    <p className="text-gray-900 dark:text-white whitespace-no-wrap">{user.xp}</p>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                     <p className="text-gray-900 whitespace-no-wrap">{user.streak} 🔥</p>
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                     <p className="text-gray-900 dark:text-white whitespace-no-wrap">{user.streak} 🔥</p>
                   </td>
                 </tr>
               ))}

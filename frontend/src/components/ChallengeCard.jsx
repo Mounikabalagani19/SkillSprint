@@ -22,22 +22,78 @@ const ChallengeCard = ({ challenge }) => {
       const response = await api.submitAnswer(challenge.id, answer);
       setFeedback(response.data.message);
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.detail || "Incorrect answer. Try again!");
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
+        if (err.response && err.response.data) {
+          // Server may return validation errors as objects; stringify safely
+          const data = err.response.data;
+          let message = "Incorrect answer. Try again!";
+          if (typeof data === 'string') {
+            message = data;
+          } else if (data.detail) {
+            // detail can be a string or list/dict from FastAPI
+            if (typeof data.detail === 'string') message = data.detail;
+            else message = JSON.stringify(data.detail);
+          } else {
+            // fallback: stringify whole response body but limit length
+            try {
+              message = JSON.stringify(data);
+              if (message.length > 500) message = message.slice(0, 500) + '...';
+            } catch (e) {
+              message = 'An unexpected error occurred. Please try again.';
+            }
+          }
+          setError(message);
+        } else {
+          setError("An unexpected error occurred. Please try again.");
+        }
       console.error(err);
     }
   };
 
+  // compute dayLabel and displayTitle so we don't show "Day N:" twice
+  let dayLabel = null;
+  let displayTitle = challenge.title || '';
+  if (challenge) {
+    if (challenge.day) {
+      dayLabel = `Day ${challenge.day}`;
+    } else if (challenge.title) {
+      const m = challenge.title.match(/Day\s*(\d+)/i);
+      if (m) {
+        dayLabel = `Day ${m[1]}`;
+        // strip the leading "Day N:" or "Day N -" from the title for display
+        displayTitle = challenge.title.replace(/^Day\s*\d+\s*[:\-–—]?\s*/i, '');
+      }
+    }
+  }
+
   return (
     <div className="challenge-card">
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{challenge.title}</h3>
-        <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
-          {challenge.category}
-        </span>
+        <div className="flex-1">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{displayTitle}</h3>
+        </div>
+
+        <div className="badge-stack ml-4 flex flex-col items-end">
+          {(() => {
+            let dayLabel = null;
+            if (challenge) {
+              if (challenge.day) {
+                dayLabel = `Day ${challenge.day}`;
+              } else if (challenge.title) {
+                const m = challenge.title.match(/Day\s*(\d+)/i);
+                if (m) dayLabel = `Day ${m[1]}`;
+              }
+            }
+            return dayLabel ? (
+              <span className="day-badge mb-2" aria-hidden>
+                {dayLabel}
+              </span>
+            ) : null;
+          })()}
+
+          <span className="category-badge">
+            {challenge.category}
+          </span>
+        </div>
       </div>
       <p className="text-slate-600 dark:text-slate-300 mb-6 flex-grow leading-relaxed">{challenge.question}</p>
       
