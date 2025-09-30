@@ -201,7 +201,3 @@ python -m pytest -q
 - Run backend tests before PRs
 - Keep questions/answers consistent and add variants for user-friendly matching
 
----
-
-## License
-Choose and add a license (e.g., MIT).
