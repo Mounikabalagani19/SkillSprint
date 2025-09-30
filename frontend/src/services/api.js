@@ -46,6 +46,21 @@ export default {
   // --- NEW FUNCTION TO GET USER'S OWN DATA ---
   getMe() {
     return apiClient.get('/users/me');
+  },
+
+  // --- Modules ---
+  listModuleLevels() {
+    return apiClient.get('/modules/levels');
+  },
+
+  getModuleItems(level, module = 'python') {
+    if (module && module !== 'python') return apiClient.get(`/modules/${module}/${level}`);
+    return apiClient.get(`/modules/${level}`); // back-compat
+  },
+
+  submitModuleAnswer(level, payload, module = 'python') {
+    if (module && module !== 'python') return apiClient.post(`/modules/${module}/${level}/submit`, payload);
+    return apiClient.post(`/modules/${level}/submit`, payload); // back-compat
   }
 };
 

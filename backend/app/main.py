@@ -18,6 +18,7 @@ app = FastAPI(
 # It tells the backend to accept requests from your frontend.
 origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     # You can add other origins here if needed, e.g., your deployed frontend URL
 ]
 

@@ -23,7 +23,7 @@ challenges_to_add = [
     Challenge(title="Day 2: Three-digit Puzzle", question="I am a 3-digit number. Tens digit = ones digit + 5. Hundreds digit = tens digit – 8. What number am I?", category="Math", answer="194"),
     Challenge(title="Day 2: Background Property", question="Which CSS property changes background color?", category="Frontend", answer="background-color"),
     # Day 3
-    Challenge(title="Day 3: Star Loop", question="for i in range(1, 5):\n    print(i * '*') → What is the output?", category="Coding", answer="*\n**\n***\n****"),
+    Challenge(title="Day 3: Star Loop", question="for i in range(1, 5):\n    print(i, end=' ') → What is the output?", category="Coding", answer="1 2 3 4"),
     Challenge(title="Day 3: Telephone Inventor", question="Who invented the telephone?", category="General Knowledge", answer="Alexander Graham Bell"),
     Challenge(title="Day 3: Cats and Mice", question="5 cats catch 5 mice in 5 minutes. How many cats catch 100 mice in 100 minutes?", category="Math", answer="5"),
     Challenge(title="Day 3: JS Variable Keyword", question="Which keyword is used to declare a variable in JS (ES6)?", category="Frontend", answer="let"),

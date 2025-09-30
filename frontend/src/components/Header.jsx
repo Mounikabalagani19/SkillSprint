@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
-import { Home as HomeIcon, Trophy } from "lucide-react";
+import { Home as HomeIcon, Trophy, Layers } from "lucide-react";
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -33,6 +33,12 @@ const Header = () => {
               className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
             >
               <span className="inline-flex items-center gap-2"><Trophy className="w-4 h-4" aria-hidden="true" /> <span>Leaderboard</span></span>
+            </NavLink>
+            <NavLink
+              to="/modules"
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+            >
+              <span className="inline-flex items-center gap-2"><Layers className="w-4 h-4" aria-hidden="true" /> <span>Modules</span></span>
             </NavLink>
             {isAuthenticated && (
               <NavLink
@@ -119,6 +125,13 @@ const Header = () => {
                 onClick={closeMobile}
               >
                 <span className="inline-flex items-center gap-2"><Trophy className="w-5 h-5" aria-hidden="true" /> <span>Leaderboard</span></span>
+              </NavLink>
+              <NavLink
+                to="/modules"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={closeMobile}
+              >
+                <span className="inline-flex items-center gap-2"><Layers className="w-5 h-5" aria-hidden="true" /> <span>Modules</span></span>
               </NavLink>
               {isAuthenticated && (
                 <NavLink

@@ -15,7 +15,7 @@ export const questions = [
   },
   {
     day: 3,
-    coding: "for i in range(1, 5): print(i * '*')",
+    coding: "for i in range(1, 5):\n    print(i, end=' ') → What is the output?",
     gk: "Who invented the telephone?",
     math: "5 cats catch 5 mice in 5 minutes. How many cats catch 100 mice in 100 minutes?",
     frontend: "Which keyword is used to declare a variable in JS (ES6)?"

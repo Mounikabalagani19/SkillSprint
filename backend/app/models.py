@@ -62,3 +62,12 @@ class UserChallenge(Base):
     challenge_id = Column(Integer, ForeignKey("challenges.id"), primary_key=True)
     user = relationship("User", back_populates="challenges_completed")
     challenge = relationship("Challenge", back_populates="users_completed")
+
+# --- MODULES PROGRESS TABLE ---
+# Tracks which module QAs a user has completed correctly to avoid re-awarding XP
+class ModuleProgress(Base):
+    __tablename__ = "module_progress"
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    level = Column(String, primary_key=True)  # beginner | intermediate | expert
+    qa_id = Column(Integer, primary_key=True)  # 1..20 within each level
+    completed_at = Column(DateTime, default=datetime.utcnow)

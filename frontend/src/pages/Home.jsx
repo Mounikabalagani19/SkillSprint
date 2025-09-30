@@ -88,6 +88,21 @@ const Home = () => {
             </div>
           )
         )}
+
+        {/* Modules quick access section */}
+        <div className="mt-16">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">Practice Modules</h3>
+            <a href="/modules" className="btn-secondary">View all</a>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="/modules/python" className="module-card block">
+              <div className="text-sm text-slate-500 dark:text-slate-400">Module</div>
+              <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">Python</div>
+              <p className="mt-2 text-slate-600 dark:text-slate-300">Choose Beginner, Intermediate, or Expert and practice sequentially.</p>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
