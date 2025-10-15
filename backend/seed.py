@@ -1,12 +1,6 @@
 from app.database import SessionLocal, engine
 from app.models import Challenge, Base
 
-# Create tables if they don't exist
-Base.metadata.create_all(bind=engine)
-
-# Get a new database session
-db = SessionLocal()
-
 # --- Sample Challenges ---
 
 challenges_to_add = [
@@ -165,34 +159,44 @@ challenges_to_add = [
     Challenge(title="Day 30: Animation Speed", question="Which CSS property controls animation speed?", category="Frontend", answer="animation-duration"),
 ]
 
-try:
-    # Check if challenges already exist to avoid duplicates
-    existing_titles = {c.title for c in db.query(Challenge).all()}
-    
-    new_challenges = [
-        c for c in challenges_to_add if c.title not in existing_titles
-    ]
+def seed_database():
+    """Create tables and seed default challenges if not present."""
+    # Create tables if they don't exist
+    Base.metadata.create_all(bind=engine)
 
-    # If the Challenge model exposes a 'day' column, try to populate it by parsing the title
-    import re
-    for c in new_challenges:
-        try:
-            m = re.search(r"Day\s*(\d+)", c.title or "", re.IGNORECASE)
-            if m:
-                c.day = int(m.group(1))
-        except Exception:
-            pass
+    db = SessionLocal()
+    try:
+        # Check if challenges already exist to avoid duplicates
+        existing_titles = {c.title for c in db.query(Challenge).all()}
 
-    if new_challenges:
-        db.add_all(new_challenges)
-        db.commit()
-        print(f"Successfully added {len(new_challenges)} new challenges to the database.")
-    else:
-        print("Challenges already exist in the database. No new challenges were added.")
+        new_challenges = [
+            c for c in challenges_to_add if c.title not in existing_titles
+        ]
 
-except Exception as e:
-    print(f"An error occurred: {e}")
-    db.rollback()
+        # If the Challenge model exposes a 'day' column, try to populate it by parsing the title
+        import re
+        for c in new_challenges:
+            try:
+                m = re.search(r"Day\s*(\d+)", c.title or "", re.IGNORECASE)
+                if m:
+                    c.day = int(m.group(1))
+            except Exception:
+                pass
 
-finally:
-    db.close()
+        if new_challenges:
+            db.add_all(new_challenges)
+            db.commit()
+            print(f"Successfully added {len(new_challenges)} new challenges to the database.")
+        else:
+            print("Challenges already exist in the database. No new challenges were added.")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        db.rollback()
+
+    finally:
+        db.close()
+
+
+if __name__ == "__main__":
+    seed_database()
