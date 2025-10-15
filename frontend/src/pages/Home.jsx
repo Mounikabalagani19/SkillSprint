@@ -12,6 +12,11 @@ const Home = () => {
       try {
         setLoading(true);
         const response = await api.getChallenges();
+        // Debug: log what the API returns to help diagnose missing cards
+        console.log("/challenges response:", {
+          count: Array.isArray(response.data) ? response.data.length : 'n/a',
+          sample: Array.isArray(response.data) && response.data.length ? response.data[0] : response.data,
+        });
         setChallenges(response.data);
         setError(null);
       } catch (err) {
@@ -73,7 +78,7 @@ const Home = () => {
         )}
         
         {!loading && !error && (
-          challenges.length > 0 ? (
+          challenges && challenges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-fr">
               {challenges.map((challenge) => (
                 <ChallengeCard key={challenge.id} challenge={challenge} />
@@ -83,7 +88,11 @@ const Home = () => {
             <div className="glass-card p-12 text-center max-w-2xl mx-auto">
               <div className="text-6xl mb-4">🎯</div>
               <p className="text-slate-500 dark:text-slate-400 text-xl">
-                No challenges available right now. Check back soon!
+                No challenges available right now. If you just deployed or switched databases,
+                please refresh in a moment while the server seeds data.
+              </p>
+              <p className="mt-3 text-slate-400 text-sm">
+                Tip: Make sure you’re logged in to submit answers. Logged-out users see Day 1.
               </p>
             </div>
           )

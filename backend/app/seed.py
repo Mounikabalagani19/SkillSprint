@@ -8,6 +8,8 @@ challenges_to_add = [
     Challenge(title="Day 1: Python List Slicing", question="What is the output of `my_list = [10, 20, 30, 40, 50]` followed by `print(my_list[1:3])`?", category="Coding", answer="[20, 30]"),
     Challenge(title="Day 1: Capital of France", question="What is the capital city of France?", category="General Knowledge", answer="Paris"),
     Challenge(title="Day 1: Simple Math Puzzle", question="If you have a pie with 8 slices and you eat 3, what fraction of the pie is left?", category="Math", answer="5/8"),
+    # Missing Day 1 frontend question (hyperlink tag)
+    Challenge(title="Day 1: Hyperlink Tag", question="Which HTML tag is used to create a hyperlink?", category="Frontend", answer="<a>"),
     # Day 2
         Challenge(title="Day 2: Reverse String", question="s = 'SkillSprint' → Output of print(s[::-1])?", category="Coding", answer="tnirpSllikS"),
         Challenge(title="Day 2: Red Planet", question="Which planet is called the 'Red Planet'?", category="General Knowledge", answer="Mars"),
@@ -160,8 +162,10 @@ challenges_to_add = [
 ]
 
 
-def seed_database():
-    """Create tables and seed default challenges if not present."""
+def seed_database() -> int:
+    """Create tables and seed default challenges if not present.
+    Returns the number of items inserted (0 if nothing to add).
+    """
     # Create tables if they don't exist
     Base.metadata.create_all(bind=engine)
 
@@ -188,12 +192,15 @@ def seed_database():
             db.add_all(new_challenges)
             db.commit()
             print(f"Successfully added {len(new_challenges)} new challenges to the database.")
+            return len(new_challenges)
         else:
             print("Challenges already exist in the database. No new challenges were added.")
+            return 0
 
     except Exception as e:
         print(f"An error occurred: {e}")
         db.rollback()
+        return 0
 
     finally:
         db.close()
