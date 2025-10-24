@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import ChallengeCard from "../components/ChallengeCard.jsx";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [challenges, setChallenges] = useState([]);
@@ -112,7 +113,7 @@ const Home = () => {
         <div className="mt-16">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">Practice Modules</h3>
-            <a href="/modules" className="btn-secondary">View all</a>
+            <Link to="/modules" className="btn-secondary">View all</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {favourites && favourites.length > 0 ? (
@@ -124,7 +125,7 @@ const Home = () => {
                 const m = modulesMap[slug];
                 if (!m) return null;
                 return (
-                  <a key={slug} href={m.href} className="module-card block relative">
+                  <Link key={slug} to={m.href} className="module-card block relative">
                         <div className="absolute right-4 top-4 w-9 h-9 inline-flex items-center justify-center rounded-full shadow-sm border text-rose-500 bg-rose-50/30 border-rose-100/30">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" style={{ transform: 'translate(-0.5px, -1px)' }}>
                             <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.657 3.172 10.828a4 4 0 010-5.656z" clipRule="evenodd" />
@@ -133,7 +134,7 @@ const Home = () => {
                     <div className="text-sm text-slate-500 dark:text-slate-400">Module</div>
                     <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">{m.title}</div>
                     <p className="mt-2 text-slate-600 dark:text-slate-300">{m.desc}</p>
-                  </a>
+                  </Link>
                 );
               })
             ) : (
