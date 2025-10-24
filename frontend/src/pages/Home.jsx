@@ -6,6 +6,7 @@ const Home = () => {
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [favourites, setFavourites] = useState([]);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -28,6 +29,15 @@ const Home = () => {
     };
 
     fetchChallenges();
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('favouriteModules');
+      setFavourites(raw ? JSON.parse(raw) : []);
+    } catch (e) {
+      setFavourites([]);
+    }
   }, []);
 
   return (
@@ -105,11 +115,32 @@ const Home = () => {
             <a href="/modules" className="btn-secondary">View all</a>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="/modules/python" className="module-card block">
-              <div className="text-sm text-slate-500 dark:text-slate-400">Module</div>
-              <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">Python</div>
-              <p className="mt-2 text-slate-600 dark:text-slate-300">Choose Beginner, Intermediate, or Expert and practice sequentially.</p>
-            </a>
+            {favourites && favourites.length > 0 ? (
+              favourites.map((slug) => {
+                const modulesMap = {
+                  python: { title: 'Python', href: '/modules/python', desc: 'Choose Beginner, Intermediate, or Expert and practice sequentially.' },
+                  java: { title: 'Java', href: '/modules/java', desc: 'Choose Beginner, Intermediate, or Expert and practice sequentially.' }
+                };
+                const m = modulesMap[slug];
+                if (!m) return null;
+                return (
+                  <a key={slug} href={m.href} className="module-card block relative">
+                        <div className="absolute right-4 top-4 w-9 h-9 inline-flex items-center justify-center rounded-full shadow-sm border text-rose-500 bg-rose-50/30 border-rose-100/30">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" style={{ transform: 'translate(-0.5px, -1px)' }}>
+                            <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.657 3.172 10.828a4 4 0 010-5.656z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400">Module</div>
+                    <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">{m.title}</div>
+                    <p className="mt-2 text-slate-600 dark:text-slate-300">{m.desc}</p>
+                  </a>
+                );
+              })
+            ) : (
+              <div className="glass-card p-6 text-center max-w-2xl mx-auto">
+                <p className="text-slate-600 dark:text-slate-300">You have no favourite modules yet. Go to <a href="/modules" className="underline">Modules</a> to mark your favourites using the heat icon.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
