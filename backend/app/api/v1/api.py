@@ -11,3 +11,10 @@ api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(challenges.router, prefix="/challenges", tags=["challenges"])
 api_router.include_router(leaderboard.router, prefix="/leaderboard", tags=["leaderboard"])
 api_router.include_router(modules.router, prefix="/modules", tags=["modules"])
+
+
+# Optional health path under the API namespace so monitors hitting /api/v1/health
+# receive a 200 instead of a 405 or 404.
+@api_router.get("/health", tags=["Health"])
+def api_health():
+	return {"status": "ok", "api": "v1"}

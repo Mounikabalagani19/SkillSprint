@@ -60,3 +60,10 @@ app.include_router(api.api_router, prefix="/api/v1")
 def read_root():
     return {"message": "Welcome to the SkillSprint API!"}
 
+
+# Health check endpoint used by uptime monitors. Accepts GET and HEAD to avoid
+# 405s from services that probe with HEAD or GET. Returns minimal JSON.
+@app.api_route("/health", methods=["GET", "HEAD"], tags=["Health"])
+def health_check():
+    return {"status": "ok"}
+
