@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+passlib==1.7.4
+python-jose[cryptography]
+python-multipart

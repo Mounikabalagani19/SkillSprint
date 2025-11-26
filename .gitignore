@@ -1,0 +1,62 @@
+# Local env files and DB backups (added by migration script)
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
+# Local env files and DB backups (added by migration script)
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
+# Local env files and DB backups (added by migration script)
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
+# Local env files and DB backups (added by migration script)
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
+# Local env files and DB backups (added by migration script)
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
+# Local env files and DB backups (added by migration script)
+.env
+.env.local
+secrets.json
+*.sqlite3
+skillsprint.db
+skillsprint.db.bak
+migration/render_env_backup.txt
+db_backups/
