@@ -29,6 +29,8 @@ logger = logging.getLogger("uvicorn.error")
 default_origins = [
     "http://localhost:5173",
     "http://localhost:5174",
+    "https://skill-sprint.me",
+    "https://www.skill-sprint.me",
 ]
 
 # Support comma-separated CORS_ORIGINS env var for production (e.g., your Vercel frontend URL)
