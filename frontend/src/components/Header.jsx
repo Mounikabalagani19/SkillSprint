@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
-import { Home as HomeIcon, Trophy, Layers } from "lucide-react";
+import { Home as HomeIcon, Trophy, Layers, Shield, UserCog, Wrench, BarChart3 } from "lucide-react";
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, role } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
@@ -22,31 +22,84 @@ const Header = () => {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-2 md:space-x-4">
-            <NavLink
-              to="/"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-            >
-              <span className="inline-flex items-center gap-2"><HomeIcon className="w-4 h-4" aria-hidden="true" /> <span>Home</span></span>
-            </NavLink>
-            <NavLink
-              to="/leaderboard"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-            >
-              <span className="inline-flex items-center gap-2"><Trophy className="w-4 h-4" aria-hidden="true" /> <span>Leaderboard</span></span>
-            </NavLink>
-            <NavLink
-              to="/modules"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-            >
-              <span className="inline-flex items-center gap-2"><Layers className="w-4 h-4" aria-hidden="true" /> <span>Modules</span></span>
-            </NavLink>
+            {isAuthenticated && role?.toLowerCase() !== 'admin' && role?.toLowerCase() !== 'mentor' && (
+              <>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  end
+                >
+                  <span className="inline-flex items-center gap-2"><HomeIcon className="w-4 h-4" aria-hidden="true" /> <span>Daily Challenges</span></span>
+                </NavLink>
+                <NavLink
+                  to="/modules"
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                >
+                  <span className="inline-flex items-center gap-2"><Layers className="w-4 h-4" aria-hidden="true" /> <span>Modules</span></span>
+                </NavLink>
+                <NavLink
+                  to="/leaderboard"
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                >
+                  <span className="inline-flex items-center gap-2"><Trophy className="w-4 h-4" aria-hidden="true" /> <span>Leaderboard</span></span>
+                </NavLink>
+              </>
+            )}
             {isAuthenticated && (
-              <NavLink
-                to="/dashboard"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              >
-                Dashboard
-              </NavLink>
+              <>
+                {role?.toLowerCase() !== 'admin' && role?.toLowerCase() !== 'mentor' && (
+                  <NavLink
+                    to="/dashboard"
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  >
+                    Dashboard
+                  </NavLink>
+                )}
+                {role === 'mentor' && (
+                  <>
+                    <NavLink
+                      to="/leaderboard"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-2"><Trophy className="w-4 h-4" aria-hidden="true" /> <span>Leaderboard</span></span>
+                    </NavLink>
+                    <NavLink
+                      to="/analytics"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-2"><BarChart3 className="w-4 h-4" /> <span>Analytics</span></span>
+                    </NavLink>
+                    <NavLink
+                      to="/mentor"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-2"><UserCog className="w-4 h-4" /> <span>My Students</span></span>
+                    </NavLink>
+                    <NavLink
+                      to="/mentor/tools"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-2"><Wrench className="w-4 h-4" /> <span>Tools</span></span>
+                    </NavLink>
+                  </>
+                )}
+                {role === 'admin' && (
+                  <>
+                    <NavLink
+                      to="/analytics"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-2"><BarChart3 className="w-4 h-4" /> <span>Analytics</span></span>
+                    </NavLink>
+                    <NavLink
+                      to="/admin"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-2"><Shield className="w-4 h-4" /> <span>Admin Panel</span></span>
+                    </NavLink>
+                  </>
+                )}
+              </>
             )}
 
             <ThemeToggle />
@@ -112,35 +165,94 @@ const Header = () => {
         {mobileOpen && (
           <div className="md:hidden py-3 animate-fade-in">
             <div className="flex flex-col gap-2 p-3 glass-card">
-              <NavLink
-                to="/"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={closeMobile}
-              >
-                <span className="inline-flex items-center gap-2"><HomeIcon className="w-5 h-5" aria-hidden="true" /> <span>Home</span></span>
-              </NavLink>
-              <NavLink
-                to="/leaderboard"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={closeMobile}
-              >
-                <span className="inline-flex items-center gap-2"><Trophy className="w-5 h-5" aria-hidden="true" /> <span>Leaderboard</span></span>
-              </NavLink>
-              <NavLink
-                to="/modules"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={closeMobile}
-              >
-                <span className="inline-flex items-center gap-2"><Layers className="w-5 h-5" aria-hidden="true" /> <span>Modules</span></span>
-              </NavLink>
+              {isAuthenticated && role?.toLowerCase() !== 'admin' && role?.toLowerCase() !== 'mentor' && (
+                <>
+                  <NavLink
+                    to="/"
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={closeMobile}
+                    end
+                  >
+                    <span className="inline-flex items-center gap-2"><HomeIcon className="w-5 h-5" aria-hidden="true" /> <span>Daily Challenges</span></span>
+                  </NavLink>
+                  <NavLink
+                    to="/modules"
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={closeMobile}
+                  >
+                    <span className="inline-flex items-center gap-2"><Layers className="w-5 h-5" aria-hidden="true" /> <span>Modules</span></span>
+                  </NavLink>
+                  <NavLink
+                    to="/leaderboard"
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={closeMobile}
+                  >
+                    <span className="inline-flex items-center gap-2"><Trophy className="w-5 h-5" aria-hidden="true" /> <span>Leaderboard</span></span>
+                  </NavLink>
+                </>
+              )}
               {isAuthenticated && (
-                <NavLink
-                  to="/dashboard"
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                  onClick={closeMobile}
-                >
-                  Dashboard
-                </NavLink>
+                <>
+                  {role?.toLowerCase() !== 'admin' && role?.toLowerCase() !== 'mentor' && (
+                    <NavLink
+                      to="/dashboard"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                      onClick={closeMobile}
+                    >
+                      Dashboard
+                    </NavLink>
+                  )}
+                  {role === 'mentor' && (
+                    <>
+                      <NavLink
+                        to="/leaderboard"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                        onClick={closeMobile}
+                      >
+                        <span className="inline-flex items-center gap-2"><Trophy className="w-5 h-5" aria-hidden="true" /> <span>Leaderboard</span></span>
+                      </NavLink>
+                      <NavLink
+                        to="/analytics"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                        onClick={closeMobile}
+                      >
+                        <span className="inline-flex items-center gap-2"><BarChart3 className="w-5 h-5" /> <span>Analytics</span></span>
+                      </NavLink>
+                      <NavLink
+                        to="/mentor"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                        onClick={closeMobile}
+                      >
+                        <span className="inline-flex items-center gap-2"><UserCog className="w-5 h-5" /> <span>My Students</span></span>
+                      </NavLink>
+                      <NavLink
+                        to="/mentor/tools"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                        onClick={closeMobile}
+                      >
+                        <span className="inline-flex items-center gap-2"><Wrench className="w-5 h-5" /> <span>Tools</span></span>
+                      </NavLink>
+                    </>
+                  )}
+                  {role === 'admin' && (
+                    <>
+                      <NavLink
+                        to="/analytics"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                        onClick={closeMobile}
+                      >
+                        <span className="inline-flex items-center gap-2"><BarChart3 className="w-5 h-5" /> <span>Analytics</span></span>
+                      </NavLink>
+                      <NavLink
+                        to="/admin"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                        onClick={closeMobile}
+                      >
+                        <span className="inline-flex items-center gap-2"><Shield className="w-5 h-5" /> <span>Admin Panel</span></span>
+                      </NavLink>
+                    </>
+                  )}
+                </>
               )}
               <div className="h-px w-full bg-slate-200 dark:bg-slate-700 my-2"></div>
               {isAuthenticated ? (

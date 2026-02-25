@@ -32,6 +32,18 @@ const Login = () => {
     }
   };
 
+  const handleGuestLogin = async () => {
+    setError(null);
+    try {
+      const response = await api.loginGuest();
+      auth.login(response.data.access_token);
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Failed to log in as guest. Please try again.");
+      console.error(err);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       {/* MODIFIED: Applied glassmorphism and dark mode styles */}
@@ -84,14 +96,30 @@ const Login = () => {
               Sign in
             </button>
           </div>
+
+          <div className="flex items-center justify-center space-x-2">
+            <div className="flex-grow h-px bg-slate-300 dark:bg-slate-600"></div>
+            <span className="text-sm text-slate-500 uppercase">or</span>
+            <div className="flex-grow h-px bg-slate-300 dark:bg-slate-600"></div>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              className="group relative w-full flex justify-center py-2 px-4 border-2 border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
+            >
+              Continue as Guest
+            </button>
+          </div>
         </form>
         <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-                Don't have an account?{' '}
-                <Link to="/signup" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                    Sign up
-                </Link>
-            </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
     </div>

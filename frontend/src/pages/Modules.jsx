@@ -1,10 +1,31 @@
+// v2.1.0 - Hard refresh forced
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Modules() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [favourites, setFavourites] = useState([]);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      const role = user.role?.toLowerCase();
+      if (role === 'admin') {
+        navigate('/admin');
+      } else if (role === 'mentor') {
+        navigate('/mentor');
+      }
+    }
+  }, [user, authLoading, navigate]);
+
+  if (authLoading && user) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     try {

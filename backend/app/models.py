@@ -1,7 +1,7 @@
 # app/models.py
 
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
 from .database import Base
@@ -20,8 +20,22 @@ class User(Base):
     # When the user signed up — used to calculate the daily challenge
     signup_date = Column(DateTime, default=datetime.utcnow)
     
-    # This relationship now correctly points to the UserChallenge association table
+    # --- ROLES & RELATIONSHIPS ---
+    role = Column(String, default="student")  # student, parent, mentor, admin
+    mentor_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    child_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    admin_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    join_code = Column(String, unique=True, nullable=True)
+
+    # Hierarchical Relationships
+    # A mentor has students
+    students = relationship("User", backref=backref("mentor", remote_side=[id]), foreign_keys=[mentor_id])
+    
+    # An admin has mentors
+    mentors = relationship("User", backref=backref("admin", remote_side=[id]), foreign_keys=[admin_id])
+
     challenges_completed = relationship("UserChallenge", back_populates="user")
+    announcements = relationship("Announcement", back_populates="mentor")
 
 class Challenge(Base):
     __tablename__ = "challenges"
@@ -53,6 +67,7 @@ class Submission(Base):
     is_correct = Column(Boolean)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
+    # Note: we don't strictly need back_populates unless we navigate from User to All Submissions
     user = relationship("User")
     challenge = relationship("Challenge")
 
@@ -71,3 +86,13 @@ class ModuleProgress(Base):
     level = Column(String, primary_key=True)  # beginner | intermediate | expert
     qa_id = Column(Integer, primary_key=True)  # 1..20 within each level
     completed_at = Column(DateTime, default=datetime.utcnow)
+
+# --- ANNOUNCEMENTS TABLE ---
+class Announcement(Base):
+    __tablename__ = "announcements"
+    id = Column(Integer, primary_key=True, index=True)
+    mentor_id = Column(Integer, ForeignKey("users.id"))
+    content = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+    mentor = relationship("User", back_populates="announcements")

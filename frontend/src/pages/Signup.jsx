@@ -6,6 +6,8 @@ const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("student");
+  const [joinCode, setJoinCode] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -18,6 +20,8 @@ const Signup = () => {
         username,
         email,
         password,
+        role,
+        join_code: joinCode || null
       });
       navigate("/login");
     } catch (err) {
@@ -45,44 +49,80 @@ const Signup = () => {
               <span>{error}</span>
             </div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 rounded-t-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 dark:text-gray-200"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-2">
+              <label className="text-sm font-medium text-slate-500 uppercase tracking-wider">I am a...</label>
+              <div className="grid grid-cols-2 gap-2">
+                {['student', 'mentor', 'admin', 'guest'].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
+                    className={`py-2 px-4 rounded-xl border-2 transition-all duration-200 capitalize ${role === r
+                        ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 font-bold'
+                        : 'border-slate-200 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400'
+                      }`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 dark:text-gray-200"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 rounded-b-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 dark:text-gray-200"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+            <div className="rounded-xl shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700">
+              <div>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800 dark:text-gray-200"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+              <div>
+                <input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="w-full px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800 dark:text-gray-200"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  className={`w-full px-4 py-3 bg-white/50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800 dark:text-gray-200 ${(role === 'mentor' || role === 'student') ? 'border-b border-slate-200 dark:border-slate-700' : ''
+                    }`}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              {(role === 'mentor' || role === 'student') && (
+                <div>
+                  <input
+                    id="joinCode"
+                    name="joinCode"
+                    type="text"
+                    required
+                    className="w-full px-4 py-3 bg-purple-50/50 dark:bg-purple-900/10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800 dark:text-gray-200"
+                    placeholder={role === 'mentor' ? "Admin Join Code" : "Mentor Join Code"}
+                    value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -96,12 +136,12 @@ const Signup = () => {
           </div>
         </form>
         <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-                Already have an account?{' '}
-                <Link to="/login" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                    Sign in
-                </Link>
-            </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

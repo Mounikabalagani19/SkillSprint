@@ -1,16 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { user: authUser, loading: authLoading, isAuthenticated } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isAuthenticated } = useAuth();
-  
+
+  useEffect(() => {
+    if (!authLoading && authUser) {
+      const role = authUser.role?.toLowerCase();
+      if (role === 'admin') {
+        navigate('/admin');
+      } else if (role === 'mentor') {
+        navigate('/mentor');
+      }
+    }
+  }, [authUser, authLoading, navigate]);
+
   // For streak animation
   const streakRef = useRef(null);
   const previousStreak = useRef(null);
+
+  if (authLoading && authUser) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -56,7 +77,7 @@ const Dashboard = () => {
 
       // Update the previous streak for the next comparison
       previousStreak.current = currentStreak;
-      
+
       return () => clearTimeout(timer);
     }
   }, [user]);

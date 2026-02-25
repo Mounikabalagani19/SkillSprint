@@ -26,6 +26,35 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/guest-token", response_model=schemas.Token)
+def login_as_guest(db: Session = Depends(get_db)):
+    """
+    Creates or retrieves a guest user and returns an access token.
+    """
+    guest_username = "guest_user"
+    guest_email = "guest@skillsprint.com"
+    
+    user = crud.get_user_by_username(db, username=guest_username)
+    if not user:
+        # Create a pre-defined guest user if not exists
+        guest_create = schemas.UserCreate(
+            username=guest_username,
+            email=guest_email,
+            password="guest_password_123" # In a real app, this should be handled better
+        )
+        user = crud.create_user(db, guest_create)
+        # Force role to guest
+        user.role = "guest"
+        db.commit()
+        db.refresh(user)
+    
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires

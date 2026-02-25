@@ -1,7 +1,5 @@
-# app/api/v1/api.py
-
 from fastapi import APIRouter
-from .endpoints import users, challenges, leaderboard, modules
+from .endpoints import users, challenges, leaderboard, modules, announcements, management, analytics
 
 api_router = APIRouter()
 from fastapi import Depends
@@ -11,6 +9,9 @@ api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(challenges.router, prefix="/challenges", tags=["challenges"])
 api_router.include_router(leaderboard.router, prefix="/leaderboard", tags=["leaderboard"])
 api_router.include_router(modules.router, prefix="/modules", tags=["modules"])
+api_router.include_router(announcements.router, prefix="/announcements", tags=["announcements"])
+api_router.include_router(management.router, prefix="/management", tags=["management"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
 
 
 # Optional health path under the API namespace so monitors hitting /api/v1/health

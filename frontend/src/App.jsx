@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext.jsx";
 
 // Import components and pages
 import Header from "./components/Header.jsx";
@@ -12,6 +13,24 @@ import ModulePython from "./pages/ModulePython.jsx";
 import ModuleLevel from "./pages/ModuleLevel.jsx";
 import ModuleJava from "./pages/ModuleJava.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import MentorDashboard from "./pages/MentorDashboard.jsx";
+import MentorTools from "./pages/MentorTools.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Analytics from "./pages/Analytics.jsx";
+
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-[60vh]">Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
 
 function App() {
   return (
@@ -20,16 +39,21 @@ function App() {
         <Header />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/modules" element={<Modules />} />
-            <Route path="/modules/python" element={<ModulePython />} />
-            <Route path="/modules/python/:level" element={<ModuleLevel moduleName="python" />} />
-            <Route path="/modules/java" element={<ModuleJava />} />
-            <Route path="/modules/java/:level" element={<ModuleLevel moduleName="java" />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
+            <Route path="/modules/python" element={<ProtectedRoute><ModulePython /></ProtectedRoute>} />
+            <Route path="/modules/python/:level" element={<ProtectedRoute><ModuleLevel moduleName="python" /></ProtectedRoute>} />
+            <Route path="/modules/java" element={<ProtectedRoute><ModuleJava /></ProtectedRoute>} />
+            <Route path="/modules/java/:level" element={<ProtectedRoute><ModuleLevel moduleName="java" /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/mentor" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
+            <Route path="/mentor/tools" element={<ProtectedRoute><MentorTools /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </main>
       </div>

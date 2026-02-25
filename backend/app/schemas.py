@@ -40,8 +40,10 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    role: Optional[str] = "student"
+    join_code: Optional[str] = None
 
-    # bcrypt only supports up to 72 bytes; enforce a safe limit
+    # ... validate_password_length remains same
     @field_validator("password")
     @classmethod
     def validate_password_length(cls, v: str) -> str:
@@ -53,6 +55,11 @@ class User(UserBase):
     id: int
     xp: int
     streak: int
+    role: str
+    mentor_id: Optional[int] = None
+    child_id: Optional[int] = None
+    admin_id: Optional[int] = None
+    join_code: Optional[str] = None
     signup_date: Optional[datetime] = None
 
     # This is the new Pydantic V2 syntax
@@ -65,3 +72,17 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+# --- Announcement Schemas ---
+class AnnouncementBase(BaseModel):
+    content: str
+
+class AnnouncementCreate(AnnouncementBase):
+    pass
+
+class Announcement(AnnouncementBase):
+    id: int
+    mentor_id: int
+    timestamp: datetime
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,13 +1,38 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import ChallengeCard from "../components/ChallengeCard.jsx";
-import { Link } from "react-router-dom";
+import AnnouncementList from "../components/AnnouncementList.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      const role = user.role?.toLowerCase();
+      if (role === 'admin') {
+        navigate('/admin');
+      } else if (role === 'mentor') {
+        navigate('/mentor');
+      }
+    }
+  }, [user, authLoading, navigate]);
+
+  if (authLoading && user) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
   const [error, setError] = useState(null);
   const [favourites, setFavourites] = useState([]);
+  const [newAnnouncement, setNewAnnouncement] = useState("");
+  const [posting, setPosting] = useState(false);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -41,6 +66,22 @@ const Home = () => {
     }
   }, []);
 
+  const handlePostAnnouncement = async (e) => {
+    e.preventDefault();
+    if (!newAnnouncement.trim()) return;
+    setPosting(true);
+    try {
+      await api.createAnnouncement(newAnnouncement);
+      setNewAnnouncement("");
+      // Refresh window to show new announcement (simplified logic)
+      window.location.reload();
+    } catch (err) {
+      alert("Failed to post announcement: " + (err.response?.data?.detail || err.message));
+    } finally {
+      setPosting(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-16">
@@ -56,6 +97,29 @@ const Home = () => {
       </div>
 
       <div className="max-w-7xl mx-auto">
+        {user?.role?.toLowerCase() === 'mentor' && (
+          <div className="glass-card p-6 mb-12 border-t-4 border-t-purple-600">
+            <h3 className="text-xl font-bold mb-4">Post Announcement (Mentor Only)</h3>
+            <form onSubmit={handlePostAnnouncement}>
+              <textarea
+                className="w-full p-4 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 mb-4 focus:ring-2 focus:ring-purple-500 outline-none"
+                placeholder="What's the update today?"
+                value={newAnnouncement}
+                onChange={(e) => setNewAnnouncement(e.target.value)}
+                rows="3"
+                required
+              />
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={posting}
+              >
+                {posting ? "Posting..." : "Post Announcement"}
+              </button>
+            </form>
+          </div>
+        )}
+        <AnnouncementList />
         <h2 className="text-3xl md:text-4xl font-bold text-slate-700 dark:text-slate-200 mb-8 text-left">
           {(() => {
             // Try to extract a day number from challenges (either a 'day' field or from title "Day N")
@@ -72,14 +136,14 @@ const Home = () => {
             return `Today's Challenges${dayLabel || ''}`;
           })()}
         </h2>
-        
+
         {loading && (
           <div className="text-center py-16">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
             <p className="text-slate-500 dark:text-slate-400 mt-4 text-lg">Loading challenges...</p>
           </div>
         )}
-        
+
         {error && (
           <div className="text-center py-8">
             <div className="glass-card p-6 max-w-md mx-auto">
@@ -87,7 +151,7 @@ const Home = () => {
             </div>
           </div>
         )}
-        
+
         {!loading && !error && (
           challenges && challenges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-fr">
@@ -126,11 +190,11 @@ const Home = () => {
                 if (!m) return null;
                 return (
                   <Link key={slug} to={m.href} className="module-card block relative">
-                        <div className="absolute right-4 top-4 w-9 h-9 inline-flex items-center justify-center rounded-full shadow-sm border text-rose-500 bg-rose-50/30 border-rose-100/30">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" style={{ transform: 'translate(-0.5px, -1px)' }}>
-                            <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.657 3.172 10.828a4 4 0 010-5.656z" clipRule="evenodd" />
-                          </svg>
-                        </div>
+                    <div className="absolute right-4 top-4 w-9 h-9 inline-flex items-center justify-center rounded-full shadow-sm border text-rose-500 bg-rose-50/30 border-rose-100/30">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" style={{ transform: 'translate(-0.5px, -1px)' }}>
+                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.657 3.172 10.828a4 4 0 010-5.656z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                     <div className="text-sm text-slate-500 dark:text-slate-400">Module</div>
                     <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">{m.title}</div>
                     <p className="mt-2 text-slate-600 dark:text-slate-300">{m.desc}</p>

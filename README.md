@@ -27,42 +27,27 @@ SkillSprint is a gamified micro‑learning platform. Users complete short daily 
 ### Architecture Diagram
 
 ```mermaid
-graph TB
-    subgraph "Client Layer"
-        Browser[Web Browser]
-        LocalStorage[LocalStorage<br/>JWT Token]
-    end
+flowchart TB
+    Browser[Web Browser]
+    LocalStorage[LocalStorage JWT]
+    React[React App Vite + Tailwind]
+    Router[React Router]
+    AuthContext[Auth Context]
+    API[Axios API Client]
     
-    subgraph "Frontend Layer"
-        React[React App<br/>Vite + Tailwind]
-        Router[React Router]
-        AuthContext[Auth Context]
-        API[Axios API Client]
-    end
+    FastAPI[FastAPI Application]
+    Auth[JWT Auth Middleware]
+    CORS[CORS Middleware]
+    UserAPI[Users API]
+    ChallengeAPI[Challenges API]
+    ModuleAPI[Modules API]
+    LeaderboardAPI[Leaderboard API]
     
-    subgraph "Backend Layer"
-        FastAPI[FastAPI Application]
-        Auth[JWT Auth Middleware]
-        CORS[CORS Middleware]
-        
-        subgraph "API Endpoints"
-            UserAPI[Users API]
-            ChallengeAPI[Challenges API]
-            ModuleAPI[Modules API]
-            LeaderboardAPI[Leaderboard API]
-        end
-        
-        subgraph "Business Logic"
-            CRUD[CRUD Operations]
-            Security[Security Utils<br/>PBKDF2-SHA256]
-            Questions[Question Modules<br/>Python/Java]
-        end
-    end
-    
-    subgraph "Data Layer"
-        ORM[SQLAlchemy ORM]
-        DB[(SQLite/PostgreSQL<br/>Database)]
-    end
+    CRUD[CRUD Operations]
+    Security[Security Utils PBKDF2]
+    Questions[Question Modules]
+    ORM[SQLAlchemy ORM]
+    DB[(Database SQLite/PostgreSQL)]
     
     Browser --> React
     React --> Router
@@ -104,25 +89,25 @@ sequenceDiagram
     participant Backend
     participant Database
     
-    User->>Frontend: Login (username/password)
+    User->>Frontend: Login username/password
     Frontend->>Backend: POST /api/v1/users/token
-    Backend->>Database: Validate credentials (PBKDF2-SHA256)
+    Backend->>Database: Validate credentials PBKDF2
     Database-->>Backend: User record
-    Backend->>Backend: Generate JWT (HS256)
-    Backend-->>Frontend: { access_token, token_type }
+    Backend->>Backend: Generate JWT HS256
+    Backend-->>Frontend: access_token
     Frontend->>LocalStorage: Store JWT token
     Frontend-->>User: Navigate to Dashboard
     
     User->>Frontend: Submit Challenge Answer
     Frontend->>LocalStorage: Retrieve JWT token
-    Frontend->>Backend: POST /api/v1/challenges/{id}/submit<br/>Authorization: Bearer {token}
-    Backend->>Backend: Validate JWT & decode user
+    Frontend->>Backend: POST /api/v1/challenges/id/submit
+    Backend->>Backend: Validate JWT decode user
     Backend->>Database: Check answer correctness
     Database-->>Backend: Challenge data
-    Backend->>Database: Update XP/Streak
+    Backend->>Database: Update XP and Streak
     Backend->>Database: Record submission
-    Backend-->>Frontend: { success, message, xp, streak }
-    Frontend-->>User: Show feedback (green/red)
+    Backend-->>Frontend: success message xp streak
+    Frontend-->>User: Show feedback green or red
 ```
 
 ---
@@ -133,42 +118,29 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    subgraph "Actors"
-        Student[👨‍🎓 Student]
-        Mentor[👨‍🏫 Mentor]
-        Admin[👨‍💼 Admin]
-        Guest[👤 Guest]
-    end
+    Student[Student User]
+    Mentor[Mentor User]
+    Admin[Admin User]
+    Guest[Guest User]
     
-    subgraph "Authentication Use Cases"
-        UC1[Sign Up]
-        UC2[Login]
-        UC3[Logout]
-        UC4[Generate Join Code]
-    end
-    
-    subgraph "Learning Use Cases"
-        UC5[View Daily Challenge]
-        UC6[Submit Answer]
-        UC7[Practice Modules]
-        UC8[Choose Difficulty Level]
-        UC9[Track Progress]
-    end
-    
-    subgraph "Social Use Cases"
-        UC10[View Leaderboard]
-        UC11[Check Streak]
-        UC12[Monitor XP]
-    end
-    
-    subgraph "Management Use Cases"
-        UC13[View My Students]
-        UC14[Post Announcement]
-        UC15[Upload PDF Module]
-        UC16[Bulk Upload Challenges]
-        UC17[Manage All Users]
-        UC18[View Full Leaderboard]
-    end
+    UC1[Sign Up]
+    UC2[Login]
+    UC3[Logout]
+    UC4[Generate Join Code]
+    UC5[View Daily Challenge]
+    UC6[Submit Answer]
+    UC7[Practice Modules]
+    UC8[Choose Difficulty]
+    UC9[Track Progress]
+    UC10[View Leaderboard]
+    UC11[Check Streak]
+    UC12[Monitor XP]
+    UC13[View My Students]
+    UC14[Post Announcement]
+    UC15[Upload PDF Module]
+    UC16[Bulk Upload Challenges]
+    UC17[Manage All Users]
+    UC18[View Full Leaderboard]
     
     Guest --> UC2
     
@@ -209,21 +181,15 @@ graph TB
 ### Role-Based Access Control
 
 ```mermaid
-graph LR
-    subgraph "Admin Level"
-        Admin[Admin User]
-        AdminFeatures[• Generate join code<br/>• View all users<br/>• Full leaderboard access]
-    end
+graph TD
+    Admin[Admin User]
+    AdminFeatures["Generate join code<br/>View all users<br/>Full leaderboard"]
     
-    subgraph "Mentor Level"
-        Mentor[Mentor User]
-        MentorFeatures[• Generate join code<br/>• View own students<br/>• Post announcements<br/>• Upload modules/challenges<br/>• See student leaderboard]
-    end
+    Mentor[Mentor User]
+    MentorFeatures["Generate join code<br/>View own students<br/>Post announcements<br/>Upload modules"]
     
-    subgraph "Student Level"
-        Student[Student User]
-        StudentFeatures[• Daily challenges<br/>• Practice modules<br/>• View peer leaderboard<br/>• Track XP/streak]
-    end
+    Student[Student User]
+    StudentFeatures["Daily challenges<br/>Practice modules<br/>View peer leaderboard<br/>Track XP streak"]
     
     Admin --> AdminFeatures
     Admin -.->|manages| Mentor
@@ -243,9 +209,7 @@ graph LR
 ```mermaid
 stateDiagram-v2
     [*] --> NotAuthenticated
-    
-    NotAuthenticated --> Authenticated: Login/Signup
-    
+    NotAuthenticated --> Authenticated: Login or Signup
     Authenticated --> Dashboard: View Stats
     
     Dashboard --> DailyChallenge: Start Daily Challenge
@@ -253,11 +217,11 @@ stateDiagram-v2
     Dashboard --> Leaderboard: View Rankings
     
     DailyChallenge --> SubmitAnswer: Answer Question
-    SubmitAnswer --> Correct: Answer Correct
-    SubmitAnswer --> Incorrect: Answer Wrong
+    SubmitAnswer --> Correct: Correct Answer
+    SubmitAnswer --> Incorrect: Wrong Answer
     
-    Correct --> UpdateXP: +10 XP, +1 Streak
-    Incorrect --> ResetStreak: Streak → 0
+    Correct --> UpdateXP: +10 XP +1 Streak
+    Incorrect --> ResetStreak: Streak to 0
     
     UpdateXP --> Dashboard
     ResetStreak --> Dashboard
@@ -266,18 +230,17 @@ stateDiagram-v2
     ChooseLevel --> ModuleQuestion: Load Question
     ModuleQuestion --> SubmitModuleAnswer: Answer Question
     
-    SubmitModuleAnswer --> ModuleCorrect: Correct (First Time)
+    SubmitModuleAnswer --> ModuleCorrect: Correct First Time
     SubmitModuleAnswer --> ModuleIncorrect: Wrong
     SubmitModuleAnswer --> AlreadyCompleted: Already Done
     
-    ModuleCorrect --> UpdateModuleXP: +5 XP, +1 Streak
+    ModuleCorrect --> UpdateModuleXP: +5 XP +1 Streak
     ModuleIncorrect --> ResetStreak
     AlreadyCompleted --> ModuleQuestion: No XP Award
     
     UpdateModuleXP --> ModuleQuestion: Next Question
     
     Leaderboard --> Dashboard
-    
     Dashboard --> [*]: Logout
 ```
 
