@@ -52,15 +52,23 @@ app.add_middleware(
 # --- Auto-seed on first boot (for environments without shell) ---
 @app.on_event("startup")
 def ensure_seed_data():
-    """Seed the database with default challenges on startup.
+    """Create tables and seed the database with default challenges on startup.
     It's idempotent: only inserts missing titles, so it's safe to run every boot.
     """
     try:
+        # Create all tables if they don't exist
+        from .database import Base, engine
+        Base.metadata.create_all(bind=engine)
+        print("Database tables initialized")
+        
+        # Seed challenges
         inserted = seed_database()
         print(f"Seeding check complete. Inserted: {inserted}")
     except Exception as e:
         # Log and continue serving; seeding is non-critical
-        print(f"Startup seeding skipped due to error: {e}")
+        print(f"Startup initialization error: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 # --- Request logging middleware ---
